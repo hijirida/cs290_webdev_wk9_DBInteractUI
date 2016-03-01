@@ -39,6 +39,13 @@ use the data the server provides to update the page.
 // Section to  import all required packages
 // *************************
 
+// use express modules to make it easy to handle input/output
+var express = require('express');
+var app = express();
+
+// set the port for this application to 3002
+app.set("port", 3002);
+
 // session package to track user session
 var session = require ('express-session');
 app.use(session({secret:'someSecretPasswrod'}));
@@ -46,10 +53,20 @@ app.use(session({secret:'someSecretPasswrod'}));
 // request library to make http requests
 var request = require('request');
 
+// check for static files (e.g., .css .js files) in public directory 
+app.use(express.static('public'));
+
+// import my credentials.js module to use credentials.owmKey for openweathermap key
+// allows us to hide/replace key from primary javascript
+// TODO: Q: how do you take key out of credentials.js module and avoid exposing on github
+var credentials = require('./credentials.js');
+
 // *************************
 // start listening on port 3002
 // *************************
-// Listen code here...
+app.listen (app.get('port'), function() {
+  console.log ("app started on http://localhost:"+app.get('port')+" ctrl-C to terminate");
+});
 
 // *************************
 // GET handler
@@ -63,15 +80,18 @@ app.get ('/', getHandlerFunction);
 
 function getHandlerFunction (req, res, next) {
   var context = {};
+  console.log("inside the getHandler Function");
   // other stuff here...
 };
  
 // *************************
 // POST handler
 // *************************
+/*
 app.post('/', postHandlerFunction);
 
-var postHandlerFunction = function (req, res,) {
+var postHandlerFunction = function (req, res) {
   var context = {};
   // other stuff here...
 }
+*/

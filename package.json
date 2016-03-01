@@ -1,17 +1,18 @@
 {
-    "name": "DB_Interactions",
-    "version": "1.0.0",
-    "description": "CS290 webdev wk9 assignment database interactions with UI",
-    "main": "app.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "David Hijirida",
-    "license": "ISC",
-    "dependencies": {
-        "body-parser": "^1.13.3",
-        "express": "^4.13.2",
-        "express-session": "^1.11.3",
-        "mysql": "^2.8.0"
-    }
+  "name": "DB_Interactions",
+  "version": "1.0.0",
+  "description": "CS290 webdev wk9 assignment database interactions with UI",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "David Hijirida",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.13.3",
+    "express": "^4.13.2",
+    "express-session": "^1.11.3",
+    "mysql": "^2.8.0",
+    "request": "^2.69.0"
+  }
 }
