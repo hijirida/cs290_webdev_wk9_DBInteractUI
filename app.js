@@ -43,6 +43,11 @@ use the data the server provides to update the page.
 var express = require('express');
 var app = express();
 
+// use handlebars module to serve templated html
+var handlebars = require('express-handlebars').create({defaultLayout:'main'});
+app.engine ('handlebars', handlebars.engine);
+app.set('view engine', 'handlebars');
+
 // set the port for this application to 3002
 app.set("port", 3002);
 
@@ -52,6 +57,16 @@ app.use(session({secret:'someSecretPasswrod'}));
 
 // request library to make http requests
 var request = require('request');
+
+// use mysql module to interact with database
+// for class there is a preconfigured sql database
+var mysql = require('mysql');
+var pool = mysql.createPool({
+  host: 'localhost',
+  user: 'student',
+  password: 'default',
+  database: 'student'
+});
 
 // check for static files (e.g., .css .js files) in public directory 
 app.use(express.static('public'));
@@ -81,6 +96,7 @@ app.get ('/', getHandlerFunction);
 function getHandlerFunction (req, res, next) {
   var context = {};
   console.log("inside the getHandler Function");
+  res.render('home');  // this looks inside views for home.handlebars
   // other stuff here...
 };
  
@@ -95,3 +111,38 @@ var postHandlerFunction = function (req, res) {
   // other stuff here...
 }
 */
+// *************************
+// /reset-table GET handler
+// *************************
+// NOTE FROM CLASS: this is not a good way to handle databases by resetting them
+//                  after visting a web page. but good shortcut for now
+app.get ('/reset-table', resetTableFunction);
+
+function resetTableFunction (req, res, next) {
+  var context = {};
+  console.log ("Inside resetTableFunction");
+  // my connection pool is = mysql.pool
+  // TODO: Q: why is it mysql.pool? I defined pool = mysql.createPool({...})
+  //mysql.pool.query("DROP TABLE IF EXISTS workouts",
+  pool.query("DROP TABLE IF EXISTS workouts",
+
+    function(err) {
+      var createString = "CREATE TABLE workouts("+
+        "id INT PRIMARY KEY AUTO_INCREMENT," +
+        "name VARCHAR(255) NOT NULL," +
+        "reps INT," +
+        "weight INT," +
+        "date DATE," +
+        "lbs BOOLEAN)";
+        //mysql.pool.query(createString, 
+        pool.query(createString, 
+          function(err) {
+            //throw(err);
+            console.log("createString = "+createString);
+            context.results = "Table reset";
+            res.render ('home', context);
+          }
+        )
+    }
+  );
+}
