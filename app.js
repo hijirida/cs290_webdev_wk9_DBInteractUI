@@ -58,6 +58,12 @@ app.use(session({secret:'someSecretPasswrod'}));
 // request library to make http requests
 var request = require('request');
 
+// body parser to grab POST parameters
+var bodyParser = require ('body-parser');
+// this is the middleware to parse the post data of the body
+app.use(bodyParser.urlencoded({ extended: true })); // to support URL-encoded bodies
+app.use(bodyParser.json()); // support json encoded bodies
+
 // use mysql module to interact with database
 // for class there is a preconfigured sql database
 var mysql = require('mysql');
@@ -96,21 +102,63 @@ app.get ('/', getHandlerFunction);
 function getHandlerFunction (req, res, next) {
   var context = {};
   console.log("inside the getHandler Function");
-  res.render('home');  // this looks inside views for home.handlebars
-  // other stuff here...
+  console.log("id = "+req.param('id')+" delete = "+req.param('delete')+" edit = "+req.param('edit'));
+  
+  if (req.param('delete')=="yes") { // is this an incoming delete request?
+    //then do this
+    console.log ("inside delete = yes");
+  } else if (req.param('edit')=="yes") { // is this an incoming edit request?
+    console.log ("inside edit = yes");
+    // then do this
+  } else {
+    console.log ("this is a regular home request");
+    res.render('home');  // this looks inside views for home.handlebars
+    // other stuff here...
+  }
 };
  
 // *************************
 // POST handler
 // *************************
-/*
+
 app.post('/', postHandlerFunction);
 
-var postHandlerFunction = function (req, res) {
+function postHandlerFunction (req, res) {
+  console.log("Someone is calling me with POST");
+  console.log ("req.body = "+JSON.stringify(req.body));
+  console.log ("req.body.name = "+JSON.stringify(req.body.name));
   var context = {};
   // other stuff here...
 }
-*/
+
+function deleteRow(tableID,currentRow) {
+  console.log("Inside deletRow function");
+}
+
+/*    try {
+        var table = document.getElementById(tableID);
+        var rowCount = table.rows.length;
+        for (var i = 0; i < rowCount; i++) {
+            var row = table.rows[i];
+*/            /*var chkbox = row.cells[0].childNodes[0];*/
+            /*if (null != chkbox && true == chkbox.checked)*/
+/*           
+            if (row==currentRow.parentNode.parentNode) {
+                if (rowCount <= 1) {
+                    alert("Cannot delete all the rows.");
+                    break;
+                }
+                table.deleteRow(i);
+                rowCount--;
+                i--;
+            }
+        }
+    } catch (e) {
+        alert(e);
+    }
+*/   //getValues();
+
+
 // *************************
 // /reset-table GET handler
 // *************************

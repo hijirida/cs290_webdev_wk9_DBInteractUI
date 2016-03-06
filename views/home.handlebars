@@ -1,37 +1,143 @@
 <h1>Welcome to the workout tracker</h1>
-<p>Please enter a new entry in the table and hit "submit"</p>
-<p>SUBMIT BUTTON</p>
+<form>
+  <h2>Please enter a new workout and click "submit" to save</h2>
+  <p><input type="text" name="name" value="required text"> Exercise Name</p>
+  <p><input type="text" name="reps"> Reps</p>
+  <p><input type="text" name="weight"> Weight
+    <p>
+      <input type="radio" value="lbs" name="wtChoice" checked> lbs
+      <input type="radio" value="kg" name="wtChoice"> kg
+    </p>
+  </p>
+  <p><input type="text" name="date"> Date (YYYY-MM-DD)</p>
+  <button type="submit">SUBMIT WORKOUT</button>
+</form>
+<script>
+  var form = document.querySelector("form");
+  form.addEventListener("submit", function(event) {
+    /*console.log("intercepting submit form:"+"\n"+
+                form.elements.name.value+"\n"+
+                form.elements.reps.value+"\n"+
+                form.elements.weight.value+"\n"+
+                form.elements.wtChoice.value+"\n"+
+                form.elements.date.value);
+    */
+    event.preventDefault(); //this prevents the click event propagating up the DOM
+    // set up the AJAX request
+    var req = new XMLHttpRequest();
+    var httpString = "http://localhost:3002"; 
+    /*var bodyParams = "name="+form.elements.name.value+
+                      "&reps="+form.elements.reps.value+
+                      "&weight="+form.elements.weight.value+
+                      "&date="+form.elements.date.value+
+                      "&wtChoice="+form.elements.wtChoice.value;
+    */
+    req.open("POST", httpString, true); // true for asynch calls'
+    // must set content type as urlencoded if body is "key=value&key2=value2"
+    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
+    req.addEventListener('load', function() {
+            if (req.status >= 200 && req.status<400) { 
+              // for synch calls, all this code would be outside the .addEventListener!
+              var reqparse = JSON.parse(req.responseText);
+              console.log("reqparese = "+reqparse);
+            } else {
+              console.log("Error in network request: "+req.status.Text);
+            }
+    });
+    console.log("bodyParams = "+bodyParams);
+    req.send(bodyParams);
+  });
+</script>
 
-<p>Here is a table showing all your completed exercises</p>
-<ul>Here is the table headers
-  <li>name of exercise</li>
-  <li>reps</li>
-  <li>weight</li>
-  <li>date</li>
-  <li>lbs</li>
-<p>Each row has two buttons - one to delete and one to edit</p>
-<p>Delete removes the row</p>
+<p>test body = {{owm}}</p>
 
-<table id="dataTable">
+<h2>Here is a table showing all your completed exercises</h2>
+
+<table id="workoutTable">
     <tr>
-        <td>
-            <input type="text" name="Name" />
-            <input type="button" value="delete" onclick="deleteRow('dataTable',this)" />
-            <input type="button" value="eit" onclick="editRow('dataTable',this)" />
-        </td>
+      <th>ID#</th>
+      <th>Exercise Name</th>
+      <th>Reps</th>
+      <th>Weight</th>
+      <th>lbs / kg</th>
+      <th>Date</th>
+      <th></th>
+      <th></th>
     </tr>
     <tr>
-        <!-- <td><input type="checkbox" name="chk"/></td> -->
-        <td>
-            <input type="text" name="Name" />
-            <input type="button" value="delete" onclick="deleteRow('dataTable',this)" />
-            <input type="button" value="eit" onclick="editRow('dataTable',this)" />
-        </td>
+      <td>123456</td>
+      <td>some name here</td>
+      <td>123</td>
+      <td>175</td>
+      <td>lbs</td>
+      <td>2016-03-03</td>
+      <td><input type="button" value="delete" onclick="deleteRow('workoutTable',this)"></td>
+      <td><input type="button" value="edit" onclick="editRow('workoutTable',this)" /></td>
     </tr>
 </table>
+<script>
+  function deleteRow (tableName, someObject) {
+        console.log("someone pressed the DELETE button!!");
+        var req = new XMLHttpRequest();
+        var httpString = "http://localhost:3002?id="+"1234"+"&delete=yes"; 
+        req.open("GET", httpString, true); // for asynch calls'
+        req.addEventListener('load', 
+          function() {
+            if (req.status >= 200 && req.status<400) { 
+              // for synch calls, all this code would be outside the .addEventListener!
+              var reqparse = JSON.parse(req.responseText);
+              //console.log("reqparese = "+reqparse);
 
-<p> edit takes you to another page</p>  
-
+              // *******************
+              // Print out the city, temp  and humidity from response
+              // *******************
+              // first clear out the div element
+/*              document.getElementById("test2").innerHTML = "";
   
+              var hFour = document.createElement("H4");
+              var sourceText = document.createTextNode("From OpenWeatherMap.org: ");
+              hFour.appendChild(sourceText);
+              document.getElementById("test2").appendChild(hFour);
+  
+              var newPP = document.createElement("P");
+              var temptxt = document.createTextNode("City: "
+                                                    +reqparse.name);
+              newPP.appendChild(temptxt);
+              document.getElementById("test2").appendChild(newPP);
+  
+              newPP = document.createElement("P");	
+              temptxt = document.createTextNode("Temperature(F): "
+                                                +reqparse.main.temp);
+              newPP.appendChild(temptxt);
+              document.getElementById("test2").appendChild(newPP);
+  
+              newPP = document.createElement("P");	
+              temptxt = document.createTextNode("Humidity: "
+                                                  +reqparse.main.humidity);
+              newPP.appendChild(temptxt);
+              document.getElementById("test2").appendChild(newPP);
+*/            } else {
+              console.log("Error in network request: "+request.status.Text);
+            }
+          }
+        );
+        req.send(null);
 
-<p>body = {{owm}}</p>
+  }
+  function editRow (tableName, someObject) {
+    console.log("someone pressed the EDIT button!!");
+                var req = new XMLHttpRequest();
+    var httpString = "http://localhost:3002?id="+"1234"+"&edit=yes"; 
+    req.open("GET", httpString, true); // for asynch calls'
+    req.addEventListener('load', function() {
+            if (req.status >= 200 && req.status<400) { 
+              // for synch calls, all this code would be outside the .addEventListener!
+              var reqparse = JSON.parse(req.responseText);
+              //console.log("reqparese = "+reqparse);
+            } else {
+              console.log("Error in network request: "+request.status.Text);
+            }
+    });
+    req.send(null);
+  }
+</script>
