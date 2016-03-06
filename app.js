@@ -112,8 +112,16 @@ function getHandlerFunction (req, res, next) {
     // then do this
   } else {
     console.log ("this is a regular home request");
-    res.render('home');  // this looks inside views for home.handlebars
-    // other stuff here...
+    var createString = "Select * FROM workouts";
+    pool.query(createString, function (err, result) {
+            if (err) throw err;
+            console.log(result);
+            //res.send('Added to database with ID: ' + result.insertId);
+          var context = {};
+          context.dataList = result;
+          res.render('home', context);  // this looks inside views for home.handlebars
+    });
+
   }
 };
  
@@ -127,8 +135,24 @@ function postHandlerFunction (req, res) {
   console.log("Someone is calling me with POST");
   console.log ("req.body = "+JSON.stringify(req.body));
   console.log ("req.body.name = "+JSON.stringify(req.body.name));
-  var context = {};
-  // other stuff here...
+  var createString = 'INSERT INTO workouts(name) VALUES ("'+  
+                    req.body.name+'")';
+  console.log ("createString = "+createString);
+  /*var createString = "INSERT INTO workouts(name, reps, weight, date, lbs) VALUES ("+  
+                    req.body.name+", "+
+                    "2, "+
+                    //req.body.reps+", "+
+                    "2, "+
+                    //req.body.weight+", "+
+                    "2016-01-01, "+
+                    req.body.date+", "+
+                    "2, "+
+                    //req.body.lbs+")";
+  */
+  pool.query(createString, function (err, result) {
+            if (err) throw err;
+            //res.send('Added to database with ID: ' + result.insertId);
+        });
 }
 
 function deleteRow(tableID,currentRow) {

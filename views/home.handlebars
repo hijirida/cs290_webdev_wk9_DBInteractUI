@@ -26,20 +26,19 @@
     // set up the AJAX request
     var req = new XMLHttpRequest();
     var httpString = "http://localhost:3002"; 
-    /*var bodyParams = "name="+form.elements.name.value+
+    var bodyParams = "name="+form.elements.name.value+
                       "&reps="+form.elements.reps.value+
                       "&weight="+form.elements.weight.value+
                       "&date="+form.elements.date.value+
                       "&wtChoice="+form.elements.wtChoice.value;
-    */
     req.open("POST", httpString, true); // true for asynch calls'
     // must set content type as urlencoded if body is "key=value&key2=value2"
     req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
     req.addEventListener('load', function() {
             if (req.status >= 200 && req.status<400) { 
-              // for synch calls, all this code would be outside the .addEventListener!
-              var reqparse = JSON.parse(req.responseText);
-              console.log("reqparese = "+reqparse);
+              //for synch calls, all this code would be outside the .addEventListener!
+              //var reqparse = JSON.parse(req.responseText);
+              //console.log("reqparese = "+reqparse);
             } else {
               console.log("Error in network request: "+req.status.Text);
             }
@@ -48,8 +47,6 @@
     req.send(bodyParams);
   });
 </script>
-
-<p>test body = {{owm}}</p>
 
 <h2>Here is a table showing all your completed exercises</h2>
 
@@ -74,6 +71,18 @@
       <td><input type="button" value="delete" onclick="deleteRow('workoutTable',this)"></td>
       <td><input type="button" value="edit" onclick="editRow('workoutTable',this)" /></td>
     </tr>
+    {{#each dataList}}
+      <tr>
+        <td>{{id}}</td>
+        <td>{{name}}</td>
+        <td>{{reps}}</td>
+        <td>{{weight}}</td>
+        <td>{{lbs}}</td>
+        <td>{{date}}</td>
+        <td><input type="button" value="delete" onclick="deleteRow('workoutTable',this)"></td>
+        <td><input type="button" value="edit" onclick="editRow('workoutTable',this)" /></td>
+      </tr>
+      {{/each}}
 </table>
 <script>
   function deleteRow (tableName, someObject) {
@@ -117,7 +126,7 @@
               newPP.appendChild(temptxt);
               document.getElementById("test2").appendChild(newPP);
 */            } else {
-              console.log("Error in network request: "+request.status.Text);
+              console.log("inside event listener load: Error in network request");
             }
           }
         );
