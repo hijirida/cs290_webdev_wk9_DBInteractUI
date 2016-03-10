@@ -1,0 +1,24 @@
+<h2>Edit the exercise that you selected and click "submit" to save changes</h2>
+
+{{#each dataList}}
+
+<form>
+  <p><input type="number" value={{id}}> id# </p>
+  <p><input type="text" name="name" value={{name}}> Exercise Name</p>
+  <p><input type="number" min="0" name="reps" value={{reps}}> Reps</p>
+  <p><input type="number" min="1" name="weight" value={{weight}}> Weight
+    <p>
+      {{#if lbs}}
+        <input type="radio" value="lbs" name="wtChoice" checked> lbs
+        <input type="radio" value="kg" name="wtChoice"> kg
+      {else}}
+        <input type="radio" value="lbs" name="wtChoice"> lbs
+        <input type="radio" value="kg" name="wtChoice" checked> kg
+      {{/if}}
+    </p>
+  </p>
+  <p><input type="date" name="date" value={{date}}> Date</p>
+  <button type="submit">SUBMIT CHANGES</button>
+</form>
+
+{{/each}}

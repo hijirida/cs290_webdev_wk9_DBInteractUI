@@ -64,14 +64,14 @@ var bodyParser = require ('body-parser');
 app.use(bodyParser.urlencoded({ extended: true })); // to support URL-encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies
 
-// use mysql module to interact with database
-// for class there is a preconfigured sql database
+// use mysql module to interact with sql database
 var mysql = require('mysql');
 var pool = mysql.createPool({
   host: 'localhost',
   user: 'student',
   password: 'default',
-  database: 'student'
+  database: 'student',
+  dateStrings: 'true'
 });
 
 // check for static files (e.g., .css .js files) in public directory 
@@ -102,29 +102,63 @@ app.get ('/', getHandlerFunction);
 function getHandlerFunction (req, res, next) {
   var context = {};
   console.log("inside the getHandler Function");
-  console.log("id = "+req.param('id')+" delete = "+req.param('delete')+" edit = "+req.param('edit'));
+  console.log("id = "+req.param('id')+" delete = "+req.param('delete')+
+              " edit = "+req.param('edit'));
   
   if (req.param('delete')=="yes") { // is this an incoming delete request?
     //then do this
     console.log ("inside delete = yes");
+    var createString = "DELETE FROM workouts WHERE id = "+req.param('id');
+    pool.query(createString, function (err, result) {
+      if (err) throw (err);
+      console.log(result);    
+    });
+    res.send("Delete completed");
+ 
   } else if (req.param('edit')=="yes") { // is this an incoming edit request?
     console.log ("inside edit = yes");
-    // then do this
+    var createString = "SELECT * FROM workouts WHERE id = "+req.param('id');
+    pool.query(createString, function (err, result) {
+      if (err) throw (err);
+      console.log(result);
+      var context = {};
+      context.dataList = result; 
+      console.log("context.dataList = "+context.dataList);   
+      res.render('editWorkout', context);
+    });
+
   } else {
     console.log ("this is a regular home request");
     var createString = "Select * FROM workouts";
     pool.query(createString, function (err, result) {
-            if (err) throw err;
-            console.log(result);
-            //res.send('Added to database with ID: ' + result.insertId);
-          var context = {};
-          context.dataList = result;
-          res.render('home', context);  // this looks inside views for home.handlebars
+      if (err) throw err;
+      console.log(result);
+      //res.send('Added to database with ID: ' + result.insertId);
+      var context = {};
+      context.dataList = result;
+      res.render('home', context);  // this looks inside views for home.handlebars
     });
-
   }
 };
- 
+
+app.get ('/editworkout', getEditHandlerFunction);
+
+// This is for the /editworkout page
+function getEditHandlerFunction (req, res, next) {
+ // var context = {};
+  console.log("inside the GET EDIT Handler Function");
+  var createString = "SELECT * FROM workouts WHERE id = "+req.param('id');
+  pool.query(createString, function (err, result) {
+      if (err) throw (err);
+      console.log(result);
+      var context = {};
+      context.dataList = result; 
+      console.log("context.dataList = "+context.dataList);   
+      res.render('editWorkout', context);
+    });
+  //res.send("done");
+} 
+
 // *************************
 // POST handler
 // *************************
@@ -135,8 +169,22 @@ function postHandlerFunction (req, res) {
   console.log("Someone is calling me with POST");
   console.log ("req.body = "+JSON.stringify(req.body));
   console.log ("req.body.name = "+JSON.stringify(req.body.name));
-  var createString = 'INSERT INTO workouts(name) VALUES ("'+  
-                    req.body.name+'")';
+  var isLBS = (req.body.wtChoice == "lbs");
+  if (req.body.reps == "") req.body.reps="NULL";
+  if (req.body.weight == "") req.body.weight="NULL";
+  if (req.body.date == "") {
+   formatDate="NULL";
+  } else {
+    formatDate="'"+req.body.date+"'";
+  }
+  console.log("format date = "+formatDate);  
+  var createString = 'INSERT INTO workouts(name, reps, weight, date, lbs) VALUES ("'+  
+                    req.body.name+'", '+
+                    req.body.reps+', '+
+                    req.body.weight+', '+
+                    //'"'+req.body.date+'", '+
+                    formatDate+', '+
+                    isLBS+')';
   console.log ("createString = "+createString);
   /*var createString = "INSERT INTO workouts(name, reps, weight, date, lbs) VALUES ("+  
                     req.body.name+", "+
@@ -153,7 +201,43 @@ function postHandlerFunction (req, res) {
             if (err) throw err;
             //res.send('Added to database with ID: ' + result.insertId);
         });
+  res.send("Added a new row");
 }
+
+
+app.post ('/editworkout', postEditHandlerFunction);
+
+// This is for the /editworkout page
+function postEditHandlerFunction (req, res, next) {
+ // var context = {};
+  console.log("inside the POST EDIT Handler Function");
+  console.log ("req.body = "+JSON.stringify(req.body));
+  console.log ("req.body.name = "+JSON.stringify(req.body.name));
+  var isLBS = (req.body.wtChoice == "lbs");
+  if (req.body.reps == "") req.body.reps="NULL";
+  if (req.body.weight == "") req.body.weight="NULL";
+  if (req.body.date == "") {
+   formatDate="NULL";
+  } else {
+    formatDate="'"+req.body.date+"'";
+  }
+  console.log("format date = "+formatDate);  
+  var createString = 'UPDATE workouts SET '+
+                    'name='+'"'+req.body.name+'", '+
+                    'reps='+req.body.reps+', '+
+                    'weight='+req.body.weight+', '+
+                    'date='+formatDate+', '+
+                    'lbs='+isLBS+
+                    ' WHERE id='+req.body.id;
+  console.log ("createString = "+createString);
+  pool.query(createString, function (err, result) {
+            if (err) throw err;
+            //res.send('Added to database with ID: ' + result.insertId);
+            console.log(result);
+        });
+  res.send("UPDATED a new row");
+} 
+
 
 function deleteRow(tableID,currentRow) {
   console.log("Inside deletRow function");
