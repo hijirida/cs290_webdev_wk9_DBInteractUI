@@ -102,8 +102,10 @@ app.get ('/', getHandlerFunction);
 function getHandlerFunction (req, res, next) {
   var context = {};
   console.log("inside the getHandler Function");
-  console.log("id = "+req.param('id')+" delete = "+req.param('delete')+
-              " edit = "+req.param('edit'));
+  console.log("id = "+req.param('id')+
+              " delete = "+req.param('delete')+
+              " edit = "+req.param('edit')+
+              " showData = "+req.param('showData'));
   
   if (req.param('delete')=="yes") { // is this an incoming delete request?
     //then do this
@@ -114,25 +116,37 @@ function getHandlerFunction (req, res, next) {
       console.log(result);    
     });
     res.send("Delete completed");
- 
-  } else if (req.param('edit')=="yes") { // is this an incoming edit request?
+  } 
+  else if (req.param('edit')=="yes") { // is this an incoming edit request?
     console.log ("inside edit = yes");
     var createString = "SELECT * FROM workouts WHERE id = "+req.param('id');
+    pool.query(createString, function (err, result) {
+      if (err) throw (err);
+      //console.log(result);
+      var context = {};
+      context.dataList = result; 
+      console.log("context.dataList = "+context.dataList);   
+      res.render('editWorkout', context);
+    });
+  }
+  else if (req.param('showData')=='yes') {
+    console.log ("inside edit = yes");
+    var createString = "SELECT * FROM workouts";
     pool.query(createString, function (err, result) {
       if (err) throw (err);
       console.log(result);
       var context = {};
       context.dataList = result; 
       console.log("context.dataList = "+context.dataList);   
-      res.render('editWorkout', context);
+      res.send(context.dataList);
     });
-
-  } else {
+  } 
+  else {
     console.log ("this is a regular home request");
     var createString = "Select * FROM workouts";
     pool.query(createString, function (err, result) {
       if (err) throw err;
-      console.log(result);
+      //console.log(result);
       //res.send('Added to database with ID: ' + result.insertId);
       var context = {};
       context.dataList = result;
@@ -148,15 +162,15 @@ function getEditHandlerFunction (req, res, next) {
  // var context = {};
   console.log("inside the GET EDIT Handler Function");
   var createString = "SELECT * FROM workouts WHERE id = "+req.param('id');
+  console.log("getEditHandlerFunction createString = "+createString);
   pool.query(createString, function (err, result) {
       if (err) throw (err);
       console.log(result);
       var context = {};
       context.dataList = result; 
-      console.log("context.dataList = "+context.dataList);   
+      console.log("context.dataList = "+JSON.stringify(context.dataList));   
       res.render('editWorkout', context);
     });
-  //res.send("done");
 } 
 
 // *************************
@@ -231,18 +245,19 @@ function postEditHandlerFunction (req, res, next) {
                     ' WHERE id='+req.body.id;
   console.log ("createString = "+createString);
   pool.query(createString, function (err, result) {
+            console.log(result);
             if (err) throw err;
             //res.send('Added to database with ID: ' + result.insertId);
-            console.log(result);
+
         });
   res.send("UPDATED a new row");
 } 
 
-
+/*
 function deleteRow(tableID,currentRow) {
   console.log("Inside deletRow function");
 }
-
+*/
 /*    try {
         var table = document.getElementById(tableID);
         var rowCount = table.rows.length;

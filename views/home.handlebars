@@ -12,46 +12,10 @@
   <p><input type="date" name="date"> Date</p>
   <button type="submit">SUBMIT WORKOUT</button>
 </form>
-<script>
-  var form = document.querySelector("form");
-  form.addEventListener("submit", function(event) {
-    /*console.log("intercepting submit form:"+"\n"+
-                form.elements.name.value+"\n"+
-                form.elements.reps.value+"\n"+
-                form.elements.weight.value+"\n"+
-                form.elements.wtChoice.value+"\n"+
-                form.elements.date.value);
-    */
-    event.preventDefault(); //this prevents the click event propagating up the DOM
-    // set up the AJAX request
-    var req = new XMLHttpRequest();
-    var httpString = "http://localhost:3002"; 
-    var bodyParams = "name="+form.elements.name.value+
-                      "&reps="+form.elements.reps.value+
-                      "&weight="+form.elements.weight.value+
-                      "&date="+form.elements.date.value+
-                      "&wtChoice="+form.elements.wtChoice.value;
-    req.open("POST", httpString, true); // true for asynch calls'
-    // must set content type as urlencoded if body is "key=value&key2=value2"
-    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
-    req.addEventListener('load', function() {
-            if (req.status >= 200 && req.status<400) { 
-              //for synch calls, all this code would be outside the .addEventListener!
-              //var reqparse = JSON.parse(req.responseText);
-              //console.log("reqparese = "+reqparse);
-            } else {
-              console.log("Error in network request: "+req.status.Text);
-            }
-    });
-    console.log("bodyParams = "+bodyParams);
-    req.send(bodyParams);
-  });
-  
-  
-</script>
 
 <h2>Here is a table showing all your completed exercises</h2>
 
+<!---
 <table id="workoutTable">
     <tr>
       <th>ID#</th>
@@ -63,17 +27,7 @@
       <th></th>
       <th></th>
     </tr>
-<!--    <tr>
-      <td>123456</td>
-      <td>some name here</td>
-      <td>123</td>
-      <td>175</td>
-      <td>lbs</td>
-      <td>2016-03-03</td>
-      <td><input type="button" value="delete" onclick="deleteRow('workoutTable',this)"></td>
-      <td><input type="button" value="edit" onclick="editRow('workoutTable',this)" /></td>
-    </tr>
--->
+
     {{#each dataList}}
       <tr>
         <td>{{id}}</td>
@@ -93,62 +47,6 @@
       </tr>
       {{/each}}
 </table>
-<script>
-  function deleteRow (tableName, location) {
-        //console.log("someone pressed the DELETE button!!");
-        //console.log("deleteRow currentRow = "+location);
-        var idNum = location.
-                      parentNode.parentNode.getElementsByTagName("td")[0].innerText;
-                      // Note: location is the input element, location.parentNode is <td>
-                      // location.parentNode.parentNode is <tr>
-        console.log("deleteRow idNum = "+idNum);
-        var req = new XMLHttpRequest();
-        var httpString = "http://localhost:3002?id="+idNum+"&delete=yes"; 
-        req.open("GET", httpString, true); // for asynch calls'
-        req.addEventListener('load', 
-          function() {
-            if (req.status >= 200 && req.status<400) { 
-              // for synch calls, all this code would be outside the .addEventListener!
-            } else {
-              console.log("inside event listener load: Error in network request");
-            }
-          }
-        );
-        req.send(null);
-  }
-  
-  function editRow (tableName, location) {
-    console.log("someone pressed the EDIT button!!");
-    var idNum = location.
-                parentNode.parentNode.getElementsByTagName("td")[0].innerText;
-    console.log("editRow idNum = "+idNum);
-    var httpString = "http://localhost:3002/editworkout?id="+idNum+"&edit=yes"; 
+--!>
 
-    //refreshes the current page to a new URL
-    window.location.href = httpString;
-  }
-
-/*  
-  function editRow (tableName, location) {
-    console.log("someone pressed the EDIT button!!");
-    var idNum = location.
-                parentNode.parentNode.getElementsByTagName("td")[0].innerText;
-    console.log("editRow idNum = "+idNum);
-    var req = new XMLHttpRequest();
-    var httpString = "http://localhost:3002/editworkout?id="+idNum+"&edit=yes"; 
-    req.open("GET", httpString, false); // for asynch calls'
-    req.addEventListener('load', function() {
-            if (req.status >= 200 && req.status<400) { 
-              // for synch calls, all this code would be outside the .addEventListener!
-              var htmlReturn = req.responseText; // This is the new html response
-              console.log(htmlReturn);
-              document.getElementsByTagName("BODY")[0].innerHTML(htmlReturn);
-              //console.log("reqparese = "+reqparse);
-            } else {
-              console.log("Error in network request: "+request.status.Text);
-            }
-    });
-    req.send(null);  
-  }
-*/
-</script>
+<script type="text/javascript" src="wk9JavaScriptHome.js"></script>

@@ -1,9 +1,9 @@
 // put css here
 
-table, th, td {
-  border: 1px solid black;
+#theTable {
+  border: 0px; //1px solid black;
 }
 
-#workoutTable tr > *:nth-child(1) {
+#theTable tr > *:nth-child(1) {
     display: none;
 }
