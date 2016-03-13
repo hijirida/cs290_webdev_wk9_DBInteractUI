@@ -88,7 +88,7 @@ function listenFormSubmit() {
   
   var newTable = document.createElement("table");
   newTable.setAttribute("id", "theTable");
-  newTable.setAttribute("border", 1);
+  //newTable.setAttribute("border", 1);
   document.body.appendChild(newTable);
   var showHeader = true;
   buildRow(newTable, showHeader, 0);
