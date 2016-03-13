@@ -102,12 +102,13 @@ app.get ('/', getHandlerFunction);
 function getHandlerFunction (req, res, next) {
   var context = {};
   console.log("inside the getHandler Function");
-  console.log("id = "+req.param('id')+
-              " delete = "+req.param('delete')+
-              " edit = "+req.param('edit')+
-              " showData = "+req.param('showData'));
+  console.log("req.query = "+req.query);
+  console.log("id = "+req.query.id+
+              " delete = "+req.query.delete+
+              " edit = "+req.query.edit+
+              " showData = "+req.query.showData);
   
-  if (req.param('delete')=="yes") { // is this an incoming delete request?
+  if (req.query.delete =="yes") { // is this an incoming delete request?
     //then do this
     console.log ("inside delete = yes");
     var createString = "DELETE FROM workouts WHERE id = "+req.param('id');
@@ -117,7 +118,7 @@ function getHandlerFunction (req, res, next) {
     });
     res.send("Delete completed");
   } 
-  else if (req.param('edit')=="yes") { // is this an incoming edit request?
+  else if (req.query.edit=="yes") { // is this an incoming edit request?
     console.log ("inside edit = yes");
     var createString = "SELECT * FROM workouts WHERE id = "+req.param('id');
     pool.query(createString, function (err, result) {
@@ -129,7 +130,8 @@ function getHandlerFunction (req, res, next) {
       res.render('editWorkout', context);
     });
   }
-  else if (req.param('showData')=='yes') {
+  //else if (req.param('showData')=='yes') {
+  else if (req.query.showData =='yes') {
     console.log ("inside edit = yes");
     var createString = "SELECT * FROM workouts";
     pool.query(createString, function (err, result) {
