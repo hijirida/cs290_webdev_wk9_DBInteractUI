@@ -4,9 +4,9 @@
 
 <form>
   <p hidden><input type="number" name=idindex value={{id}}> id# </p>
-  <p><input type="text" name="name" value="{{name}}"> Exercise Name</p>
-  <p><input type="number" min="0" name="reps" value={{reps}}> Reps</p>
-  <p><input type="number" min="1" name="weight" value={{weight}}> Weight
+  <p><input type="text" name="name" value="{{name}}" required> Exercise Name (required)</p>
+  <p><input type="number" min="0" name="reps" value={{reps}}> Reps (int only)</p>
+  <p><input type="number" min="1" name="weight" value={{weight}}> Weight (int only)
     <p>
       {{#if lbs}}
         <input type="radio" value="lbs" name="wtChoice" checked> lbs

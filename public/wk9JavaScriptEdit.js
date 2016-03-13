@@ -1,3 +1,5 @@
+var hostIP = "52.27.76.189";
+// var hostIP = "localhost";
 
   var form = document.querySelector("form");
   form.addEventListener("submit", function(event) {
@@ -13,7 +15,7 @@
     event.preventDefault(); //this prevents the click event propagating up the DOM
     // set up the AJAX request
     var req = new XMLHttpRequest();
-    var httpString = "http://localhost:3002/editWorkout/"; 
+    var httpString = "http://"+hostIP+":3002/editWorkout/"; 
     var bodyParams = "id="+form.elements.idindex.value+
                       "&name="+form.elements.name.value+
                       "&reps="+form.elements.reps.value+
@@ -31,7 +33,7 @@
               //for synch calls, all this code would be outside the .addEventListener!
               //var reqparse = JSON.parse(req.responseText);
               //console.log("reqparese = "+reqparse);
-              var httpString = "http://localhost:3002"; 
+              var httpString = "http://"+hostIP+":3002"; 
               //refreshes the current page to a new URL
               window.location.href = httpString;
             } 

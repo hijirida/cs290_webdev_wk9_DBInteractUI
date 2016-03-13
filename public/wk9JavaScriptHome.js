@@ -1,3 +1,7 @@
+// **** NEED TO CHANGE HOSTS!!
+var hostIP = "52.27.76.189";
+// var hostIP = "localhost";
+
 /**********************************
  * Start Here - First load DOM content, then execute...
  **********************************/
@@ -13,19 +17,20 @@ document.addEventListener("DOMContentLoaded", function() {
 function requestTableData() {
   // make a request for
   var req = new XMLHttpRequest();
-  var httpString = "http://localhost:3002?showData=yes"; 
+  var httpString = "http://"+hostIP+":3002?showData=yes"; 
+  
   req.open("GET", httpString, true); // true for asynch calls' 
   req.addEventListener('load', function() {
     if (req.status >= 200 && req.status<400) { 
       // for synch calls, all this code would be outside the .addEventListener!
       var reqparse = JSON.parse(req.responseText);
-      //console.log("reqparse = "+JSON.stringify(reqparse));
+      console.log("reqparse = "+JSON.stringify(reqparse));
       buildTable(reqparse);
     } else {
       console.log("Error in network request: "+request.status.Text);
     }
   });
-	req.send(null);
+  req.send(null);
 }
 
 // ********************************
@@ -44,7 +49,7 @@ function listenFormSubmit() {
   
     // set up the AJAX request
     var req = new XMLHttpRequest();
-    var httpString = "http://localhost:3002"; 
+    var httpString = "http://"+hostIP+":3002"; 
     var bodyParams = "name="+form.elements.name.value+
                       "&reps="+form.elements.reps.value+
                       "&weight="+form.elements.weight.value+
@@ -192,7 +197,7 @@ function deleteRow (tableName, location) {
                       // location.parentNode.parentNode is <tr>
         console.log("deleteRow idNum = "+idNum);
         var req = new XMLHttpRequest();
-        var httpString = "http://localhost:3002?id="+idNum+"&delete=yes"; 
+        var httpString = "http://"+hostIP+":3002?id="+idNum+"&delete=yes"; 
         req.open("GET", httpString, true); // for asynch calls'
         req.addEventListener('load', 
           function() {
@@ -213,7 +218,7 @@ function deleteRow (tableName, location) {
     var idNum = location.
                 parentNode.parentNode.getElementsByTagName("td")[0].innerText;
     console.log("editRow idNum = "+idNum);
-    var httpString = "http://localhost:3002/editworkout?id="+idNum+"&edit=yes"; 
+    var httpString = "http://"+hostIP+":3002/editworkout?id="+idNum+"&edit=yes"; 
 
     //refreshes the current page to a new URL
     window.location.href = httpString;
